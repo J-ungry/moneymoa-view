@@ -1,32 +1,16 @@
 import './assets/main.css'
 
-import { createApp } from 'vue'
+import {createApp, ref} from 'vue'
 import App from './App.vue'
 
-import Keycloak from "keycloak-js";
+import {keycloak, config} from './keycloak.js'
 
-// import * as Keycloak from 'keycloak-js'
-import initKeycloakConfig from './keycloak-config.json'
-
-// createApp(App).mount('#app')
-
-const keycloak = new Keycloak(initKeycloakConfig);
 
 init();
 
 function init() {
-    // keycloak.init({
-    //     onLoad: initKeycloakConfig.onLoad
-    // }).then(auth => {
-    //     console.log(auth);
-    //     console.info("Auth OK");
-    //     createApp(App).mount('#app');
-    // }).catch((err) => {
-    //     console.error(err);
-    //     console.error("Auth Failed");
-    // })
     keycloak.init({
-        onLoad: initKeycloakConfig.onLoad
+        onLoad: config.onLoad
     }).then(auth => {
         const ONE_MINUTE = 60000;
 
@@ -36,7 +20,14 @@ function init() {
             console.info("auth OK");
         }
 
-        createApp(App).mount('#app');
+        // const app = createApp(App).mount('#app');
+        const app = createApp(App);
+
+        app.provide('keycloak', keycloak);
+        // app.config.globalProperties.$keycloak = keycloak;
+        app.mount('#app');
+
+        // Vue.prototype.$keycloak = keycloak;keycloak
 
         localStorage.setItem(`vue-token`, keycloak.token);
         localStorage.setItem(`vue-refresh-token`, keycloak.refreshToken);
