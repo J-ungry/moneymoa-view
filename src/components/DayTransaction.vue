@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, inject} from 'vue';
 import ModalConponent from "@/components/ModalConponent.vue";
 import axios from 'axios';
+import { keycloak } from "@/keycloak.js";
 
 // 데이터 변수 선언
 const dayTransaction = ref(null);
@@ -22,6 +23,11 @@ const openModal = () => {
 
 const closeModal = () => {
   isModalOpen.value = false;
+};
+
+const logout = () => {
+  console.log("logout");
+  keycloak.logout();
 };
 
 // Authorization 토큰
@@ -171,6 +177,8 @@ onMounted(() => {
       <!-- Existing code for transactions and summary -->
 
       <span @click="openModal" class="add-transaction-button">트랜잭션 추가</span>
+
+      <span @click="logout" class="add-transaction-button">로그아웃</span>
 
       <!-- 모달 -->
       <ModalComponent v-if="isModalOpen" @close="closeModal">
